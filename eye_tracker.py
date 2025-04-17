@@ -2,6 +2,9 @@ import cv2
 import mediapipe as mp
 import pyautogui
 import numpy as np
+from udp_sender import UDPSender
+
+udp = UDPSender()
 
 def run_eye_tracker(show_face_mesh=False):
     screen_w, screen_h = pyautogui.size()
@@ -113,6 +116,7 @@ def run_eye_tracker(show_face_mesh=False):
                         mapped_x = int((adjusted_x - min_x) / (max_x - min_x) * screen_w)
                         mapped_y = int((adjusted_y - min_y) / (max_y - min_y) * screen_h)
                     cv2.circle(screen, (mapped_x, mapped_y), 10, (0, 0, 255), -1)
+                    udp.send_coords(mapped_x, mapped_y) #UDP로 시선 좌표를 보냄
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('w') and not calibration_complete and calibration_step < 4:
