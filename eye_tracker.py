@@ -9,6 +9,7 @@ udp = UDPSender()
 def run_eye_tracker(show_face_mesh=False):
     screen_w, screen_h = pyautogui.size()
     cap = cv2.VideoCapture(0)
+    print(f"Camera resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
     mp_face_mesh = mp.solutions.face_mesh
     face_mesh = mp_face_mesh.FaceMesh(refine_landmarks=True)
 
