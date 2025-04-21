@@ -1,0 +1,19 @@
+# Python 관련
+__pycache__/
+*.pyc
+test.ipynb
+
+# IDE 관련
+.vscode/
+.idea/
+
+# OS 관련
+.DS_Store
+
+# 개인 설정
+*.env
+secret.txt
+
+# 로그, 캐시
+logs/
+*.log
