@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 test.ipynb
+test.py
 
 # IDE 관련
 .vscode/
