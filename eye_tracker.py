@@ -1,12 +1,10 @@
+import time 
 import cv2
 import mediapipe as mp
 import pyautogui
 import numpy as np
-from udp_sender import UDPSender
 
-udp = UDPSender()
-
-def run_eye_tracker(show_face_mesh=False):
+def run_eye_tracker(q, show_face_mesh=False):
     screen_w, screen_h = pyautogui.size()
     cap = cv2.VideoCapture(0)
     print(f"Camera resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
@@ -109,15 +107,16 @@ def run_eye_tracker(show_face_mesh=False):
                         scale_ratio = 1.0
 
                     adjusted_x = eye_center_x + (eye_x - eye_center_x) / scale_ratio
-                    adjusted_y = eye_y  # 수직 보정은 생략하거나 동일하게 적용 가능
+                    adjusted_y = eye_y
 
                     if max_x - min_x == 0 or max_y - min_y == 0:
                         mapped_x, mapped_y = screen_w // 2, screen_h // 2
                     else:
                         mapped_x = int((adjusted_x - min_x) / (max_x - min_x) * screen_w)
                         mapped_y = int((adjusted_y - min_y) / (max_y - min_y) * screen_h)
-                    cv2.circle(screen, (mapped_x, mapped_y), 10, (0, 0, 255), -1)
-                    udp.send_coords(mapped_x, mapped_y) #UDP로 시선 좌표를 보냄
+                    
+                    cv2.circle(screen, (mapped_x, mapped_y), 20, (0, 0, 225), -1)
+                    q.put((mapped_x, mapped_y))
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('w') and not calibration_complete and calibration_step < 4:
