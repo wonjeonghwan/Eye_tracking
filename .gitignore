@@ -18,3 +18,6 @@ secret.txt
 # 로그, 캐시
 logs/
 *.log
+
+# test파일
+test.ipynb
