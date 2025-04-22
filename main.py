@@ -15,7 +15,7 @@ def queue_drain_worker(q, stop_event):
 
 if __name__ == "__main__":
     USE_EYE_TRACKING = True
-    USE_GAZE_ESTIMATION = True
+    USE_GAZE_ESTIMATION = False
     SHOW_FACE_MESH_IN_TRACKER = True
     USE_UNREAL_SEND = False
 
