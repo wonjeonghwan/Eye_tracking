@@ -4,7 +4,7 @@ import mediapipe as mp
 import pyautogui
 import numpy as np
 
-def run_eye_tracker(q, show_face_mesh=False):
+def run_eye_tracker(q, show_face_mesh=False, stop_event=None):
     screen_w, screen_h = pyautogui.size()
     cap = cv2.VideoCapture(0)
     print(f"Camera resolution: {cap.get(cv2.CAP_PROP_FRAME_WIDTH)} x {cap.get(cv2.CAP_PROP_FRAME_HEIGHT)}")
@@ -45,6 +45,10 @@ def run_eye_tracker(q, show_face_mesh=False):
         half = size // 2
         cv2.line(img, (cx - half, cy), (cx + half, cy), color, thickness)
         cv2.line(img, (cx, cy - half), (cx, cy + half), color, thickness)
+
+    # 보간용 초기화
+    prev_x, prev_y = None, None
+    alpha = 0.1 # 부드러움 정도 (0.1 ~ 0.3 추천)
 
     while True:
         ret, frame = cap.read()
@@ -115,7 +119,14 @@ def run_eye_tracker(q, show_face_mesh=False):
                         mapped_x = int((adjusted_x - min_x) / (max_x - min_x) * screen_w)
                         mapped_y = int((adjusted_y - min_y) / (max_y - min_y) * screen_h)
                     
-                    cv2.circle(screen, (mapped_x, mapped_y), 20, (0, 0, 225), -1)
+                    # 보간 적용
+                    if prev_x is not None and prev_y is not None:
+                        mapped_x = int(alpha * mapped_x + (1 - alpha) * prev_x)
+                        mapped_y = int(alpha * mapped_y + (1 - alpha) * prev_y)
+
+                    prev_x, prev_y = mapped_x, mapped_y
+
+                    cv2.circle(screen, (mapped_x, mapped_y), 20, (0, 255, 0), -1)
                     q.put((mapped_x, mapped_y))
 
         key = cv2.waitKey(1) & 0xFF
@@ -126,6 +137,9 @@ def run_eye_tracker(q, show_face_mesh=False):
             collected_eye_positions.append((adjusted_x, eye_y))
             calibration_step += 1
         if key == ord('q'):
+            if stop_event is not None:
+                print("stop sign sent from 'eye_tracker.py'")
+                stop_event.set()
             break
 
         cv2.imshow("Eye Tracking - Red Dot", screen)
