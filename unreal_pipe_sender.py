@@ -1,17 +1,16 @@
-# unreal_pipe_sender.py
-import os
 import time
-import threading
 import queue
+import struct
 
 PIPE_NAME = r'\\.\pipe\unreal_pipe'
 _q = queue.Queue()
+
 
 def pipe_sender():
     print(f"📡 Unreal 파이프로 전송 시도 중: {PIPE_NAME}")
     while True:
         try:
-            with open(PIPE_NAME, 'w') as pipe:
+            with open(PIPE_NAME, 'wb') as pipe:
                 print("✅ Unreal과 파이프 연결됨")
                 while True:
                     coords = _q.get()
@@ -31,7 +30,8 @@ def get_queue():
 # 🔁 다른 큐에서 받아서 이 모듈의 q로 옮기는 함수
 def forward_to_unreal(src_q, dest_q):
     while True:
-        if not src_q.empty():
-            dest_q.put(src_q.get())
-        else:
-            time.sleep(0.005)
+        try:
+            coords = src_q.get(timeout=0.1)
+            dest_q.put(coords)
+        except queue.Empty:
+            continue

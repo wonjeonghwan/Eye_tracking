@@ -48,7 +48,7 @@ def run_eye_tracker(q, show_face_mesh=False, stop_event=None):
 
     # 보간용 초기화
     prev_x, prev_y = None, None
-    alpha = 0.1 # 부드러움 정도 (0.1 ~ 0.3 추천)
+    alpha = 0.3 # 부드러움 정도 (0.1 ~ 0.3 추천)
 
     while True:
         ret, frame = cap.read() # 위의 cv2.VideoCapture(0)를 읽어오는 함수, ret(return)은 프레임을 정상적으로 읽었는지 여부. frame은 영상데이터
@@ -75,14 +75,14 @@ def run_eye_tracker(q, show_face_mesh=False, stop_event=None):
                         connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_tesselation_style()
                         # 선을 어떻게 표시할 것 인지 = 기본 face_mesh_tesselation 스타일
                     )
-                    mp_drawing.draw_landmarks(                      # 그림 기능에서 주요 지점에 접근하여 아래를 가져온다(호출, 실행)
-                        image=face_mesh_frame,                      # 그림 그릴 대상 = 얼굴 프레임
-                        landmark_list=face_landmarks,               # 주요 지점 리스트 = 얼굴의 주요 지점
-                        connections=mp_face_mesh.FACEMESH_IRISES,   # 연결 = 얼굴 메쉬에서 홍채
-                        landmark_drawing_spec=None,                 # 점 표시 = 기본
-                        connection_drawing_spec=mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=1)
-                        # 선을 어떻게 표시할건가 = 미디어파이프 그리기에서, 그리는 사양.(B, G, R)
-                    )
+                    # mp_drawing.draw_landmarks(                      # 그림 기능에서 주요 지점에 접근하여 아래를 가져온다(호출, 실행)
+                    #     image=face_mesh_frame,                      # 그림 그릴 대상 = 얼굴 프레임
+                    #     landmark_list=face_landmarks,               # 주요 지점 리스트 = 얼굴의 주요 지점
+                    #     connections=mp_face_mesh.FACEMESH_IRISES,   # 연결 = 얼굴 메쉬에서 홍채
+                    #     landmark_drawing_spec=None,                 # 점 표시 = 기본
+                    #     connection_drawing_spec=mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=1)
+                    #     # 선을 어떻게 표시할건가 = 미디어파이프 그리기에서, 그리는 사양.(B, G, R)
+                    # )
 
                 left_iris = face_landmarks.landmark[468]    # 왼쪽 눈동자 = 모든 얼굴 주요지표에서. 468번째(홍채 중심)
                 right_iris = face_landmarks.landmark[473]   # 오른쪽 눈동자 = 473번째(홍채 중심)

@@ -6,10 +6,9 @@ def run_listener(q, stop_event=None):
         if stop_event and stop_event.is_set():
             print("IPC Listener 종료됨")
             break
-        if not q.empty():
-            x, y = q.get()
+        try:
+            x, y = q.get(timeout=1)
             print(f"📍 Received via IPC: ({x}, {y})")
-        
-        else:
-            time.sleep(1)
+        except:
+            continue
         

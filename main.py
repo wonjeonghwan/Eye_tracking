@@ -1,6 +1,6 @@
 from multiprocessing import Process, Queue, Event
-from eye_tracker import run_eye_tracker
-from gaze_tracker import run_gaze_estimation
+# from gaze_tracker import run_gaze_estimation
+from gaze_modular import run_gaze_estimation
 from ipc_listener import run_listener
 from unreal_pipe_sender import pipe_sender, get_queue, forward_to_unreal
 from threading import Thread
@@ -14,10 +14,9 @@ def queue_drain_worker(q, stop_event):
             pass
 
 if __name__ == "__main__":
-    USE_EYE_TRACKING = True
-    USE_GAZE_ESTIMATION = False
+    USE_GAZE_ESTIMATION = True
     SHOW_FACE_MESH_IN_TRACKER = True
-    USE_UNREAL_SEND = False
+    USE_UNREAL_SEND = True
 
     stop_event = Event()
     q = Queue()
@@ -26,15 +25,11 @@ if __name__ == "__main__":
     if not USE_UNREAL_SEND:
         Thread(target=queue_drain_worker, args=(q, stop_event), daemon=True).start()
 
-    if USE_EYE_TRACKING:
-        if USE_GAZE_ESTIMATION:
-            processes.append(Process(target=run_gaze_estimation, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
-        else:
-            processes.append(Process(target=run_eye_tracker, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
-        if USE_UNREAL_SEND:
-            processes.append(Process(target=run_listener, args=(q,stop_event)))
+    if USE_GAZE_ESTIMATION:
+        processes.append(Process(target=run_gaze_estimation, args=(q, SHOW_FACE_MESH_IN_TRACKER, stop_event)))
 
     if USE_UNREAL_SEND:
+        processes.append(Process(target=run_listener, args=(q,stop_event)))
         unreal_q = get_queue()
         # ✅ Thread로 실행 (queue.Queue 호환)
         Thread(target=pipe_sender, daemon=True).start()
