@@ -1,8 +1,5 @@
-# conda 설치 필요 (먼저 설치)
-# conda install numpy opencv scikit-learn
-
-# pip 패키지 목록 (pip install -r requirements.txt)
 mediapipe==0.10.9
 numpy==1.26.4
 opencv-python==4.11.0.86
-ace_tools
+pyautogui==0.9.54
+pywin32==306
